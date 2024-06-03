@@ -132,7 +132,19 @@ protected:
     }
 };
 
+class SizeCalculator
+{
+public:
+    SizeCalculator(CalculationSize* method) : m(method) {}
+    ~SizeCalculator() { delete m; }
+    QHash<QString, float>Calculation(const QString path)
+    {
+        return m->Calculation(path);
+    }
 
+private:
+    CalculationSize* m;
+};
 
 
 
