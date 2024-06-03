@@ -93,7 +93,44 @@ protected:
 
 };
 
+class CalculationSizeForFileTypes : public CalculationSize
+{
+public:
+    QHash<QString, float>Calculation(const QString path)
+    {
+        QHash<QString, float> table;
+        QDir folder(path);
+        if(!folder.exists()){
+            qWarning("Can not find directory");
+        }
+        else{
+            table = tableTypes(path, table);
+        }
+        return percent(table);
+    }
 
+protected:
+    QHash<QString, float> tableTypes(QString path, QHash<QString, float> table)
+    {
+        QDir folder(path);
+        folder.setFilter(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
+
+        QFileInfoList listOfFiles = folder.entryInfoList();
+        foreach (QFileInfo fileInfo, listOfFiles) {
+            QString fileName(fileInfo.fileName());
+
+            if(fileInfo.isDir()){
+                table = (tableTypes(path + "/" + fileName, table));
+            }
+            else{
+                QString suf = fileInfo.suffix();
+                float s = table.value(suf);
+                table.insert(suf, s + fileInfo.size());
+            }
+        }
+        return table;
+    }
+};
 
 
 
