@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     // Тесты /test1, /test2, /test3, /test4
-    QString path = "../StorageExplorer/test3";
+    QString path = "../StorageExplorer/";
 
     SizeCalculator* calcFolders = new SizeCalculator(new CalculationSizeForFolders);
     SizeCalculator* calcTypes = new SizeCalculator(new CalculationSizeForFileTypes);
