@@ -7,25 +7,6 @@ void printHashTable(auto table)
     if(table.size() != 0){
         qDebug() << "Key    Value";
         for (auto i = table.cbegin(), end = table.cend(); i != end; ++i){
-            if(i.value() > 0.01){
-                qDebug() << qPrintable(i.key()) << ": " << i.value() << "%";
-            }
-            else if(i.value() != 0){
-                qDebug() << qPrintable(i.key()) << ": " << "< 0.01 %";
-            }
-        }
-        qDebug() << "\n";
-    }
-    else{
-        qWarning() << "Table is empty\n";
-    }
-}
-
-void printHashTable2(auto table)
-{
-    if(table.size() != 0){
-        qDebug() << "Key    Value";
-        for (auto i = table.cbegin(), end = table.cend(); i != end; ++i){
             if(i.value() < 0.01 and i.value() != 0){
                 qDebug() << qPrintable(i.key()) << ": " << "< 0.01 %";
             }
@@ -48,8 +29,8 @@ int main(int argc, char *argv[])
 
     SizeCalculator* calcFolders = new SizeCalculator(new CalculationSizeForFolders);
     SizeCalculator* calcTypes = new SizeCalculator(new CalculationSizeForFileTypes);
-    printHashTable2(calcFolders->Calculation(path));
-    printHashTable2(calcTypes->Calculation(path));
+    printHashTable(calcFolders->Calculation(path));
+    printHashTable(calcTypes->Calculation(path));
 
 
     delete calcFolders;

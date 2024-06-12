@@ -5,32 +5,32 @@
 #include <QHash>
 #include <math.h>
 
+QHash<QString, float> percent(QHash<QString, float> table)
+{
+    float sumValue;
+    for (auto j = table.cbegin(), end = table.cend(); j != end; ++j){
+        sumValue += j.value();
+    }
+    //qDebug() << "Size of all folders" << sumValue;
+    if(sumValue != 0) {
+        for (auto i = table.cbegin(), end = table.cend(); i != end; ++i){
+            table[i.key()] = ceil(i.value() / sumValue * 10000) / 100;
+        }
+    }
+    else {
+        for (auto i = table.cbegin(), end = table.cend(); i != end; ++i){
+            table[i.key()] = 0;
+        }
+    }
+    return table;
+}
+
 class CalculationSize
 {
 public:
     virtual ~CalculationSize() {}
 
     virtual QHash<QString, float>Calculation(const QString path) = 0;
-
-    virtual QHash<QString, float> percent(QHash<QString, float> table)
-    {
-        float sumValue;
-        for (auto j = table.cbegin(), end = table.cend(); j != end; ++j){
-            sumValue += j.value();
-        }
-        //qDebug() << "Size of all folders" << sumValue;
-        if(sumValue != 0) {
-            for (auto i = table.cbegin(), end = table.cend(); i != end; ++i){
-                table[i.key()] = ceil(i.value() / sumValue * 10000) / 100;
-            }
-        }
-        else {
-            for (auto i = table.cbegin(), end = table.cend(); i != end; ++i){
-                table[i.key()] = 0;
-            }
-        }
-        return table;
-    }
 };
 
 class CalculationSizeForFolders : public CalculationSize
@@ -90,7 +90,6 @@ protected:
         table.insert("currentFolder", currentFolderSize);
         return table;
     }
-
 };
 
 class CalculationSizeForFileTypes : public CalculationSize
@@ -143,19 +142,9 @@ public:
     }
 
 private:
+    // указатель на объект
     CalculationSize* m;
 };
-
-
-
-
-
-
-
-
-
-
-
 
 #endif // CALCULATIONSIZE_H
 
