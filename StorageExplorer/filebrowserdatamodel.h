@@ -32,6 +32,8 @@ public:
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
+    bool setDataModel(QList<tableData> newDataModel);
+
 private:
     // Перечисление названий столбцов таблицы
     enum NameColumn {

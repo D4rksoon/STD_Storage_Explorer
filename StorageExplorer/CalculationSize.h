@@ -5,26 +5,6 @@
 #include <QHash>
 #include <math.h>
 
-QHash<QString, float> percent(QHash<QString, float> table)
-{
-    float sumValue;
-    for (auto j = table.cbegin(), end = table.cend(); j != end; ++j){
-        sumValue += j.value();
-    }
-    //qDebug() << "Size of all folders" << sumValue;
-    if(sumValue != 0) {
-        for (auto i = table.cbegin(), end = table.cend(); i != end; ++i){
-            table[i.key()] = ceil(i.value() / sumValue * 10000) / 100;
-        }
-    }
-    else {
-        for (auto i = table.cbegin(), end = table.cend(); i != end; ++i){
-            table[i.key()] = 0;
-        }
-    }
-    return table;
-}
-
 class CalculationSize
 {
 public:
@@ -46,7 +26,7 @@ public:
         else{
             table = tableFolders(path);
         }
-        return percent(table);
+        return table;
     }
 
 protected:
@@ -105,7 +85,7 @@ public:
         else{
             table = tableTypes(path, table);
         }
-        return percent(table);
+        return table;
     }
 
 protected:
@@ -140,7 +120,10 @@ public:
     {
         return m->Calculation(path);
     }
-
+    void setCalculationStrategy(CalculationSize *strategy)
+    {
+        m = strategy;
+    }
 private:
     // указатель на объект
     CalculationSize* m;
