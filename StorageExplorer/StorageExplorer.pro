@@ -1,6 +1,9 @@
-QT = core
+QT       += core gui \
+    widgets
 
-CONFIG += c++17 cmdline
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+CONFIG += c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -8,13 +11,17 @@ CONFIG += c++17 cmdline
 
 SOURCES += \
         filebrowserdatamodel.cpp \
-        main.cpp
+        main.cpp \
+        widget.cpp
+
+HEADERS += \
+    CalculationSize.h \
+    filebrowserdatamodel.h \
+    widget.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-HEADERS += \
-    CalculationSize.h \
-    filebrowserdatamodel.h
+
