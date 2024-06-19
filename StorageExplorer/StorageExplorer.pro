@@ -18,6 +18,8 @@ SOURCES += \
 HEADERS += \
     CalculationSize.h \
     Chart.h \
+    StorageExplorerObserver.h \
+    SubjectObs.h \
     filebrowserdatamodel.h \
     widget.h
 

@@ -1,28 +1,5 @@
 #include "widget.h"
 #include <QDebug>
-QList<tableData> fillingData(QHash<QString, float> table)
-{
-    QList<tableData> listData;
-    float sumValue;
-    for (auto j = table.cbegin(), end = table.cend(); j != end; ++j){
-        sumValue += j.value();
-    }
-    for (auto i = table.cbegin(), end = table.cend(); i != end; ++i){
-        QString name = i.key();
-        QString size = QString::number(long(i.value() / 1024)) + " KB";
-        QString percent;
-        float prcnt = ceil(i.value() / sumValue * 10000) / 100;
-        if(prcnt < 0.01 and prcnt != 0){
-            percent = "<0.01 %";
-        }
-        else{
-            percent = QString::number(prcnt) + " %";
-        }
-
-        listData.append(tableData(name, size, percent));
-    }
-    return listData;
-}
 
 Widget::Widget(QWidget *parent)
     : QWidget{parent}
@@ -54,15 +31,11 @@ Widget::Widget(QWidget *parent)
     treeView->setMinimumWidth(400);
     treeView->header()->resizeSection(0, 400);
 
-    barChartClass = new BarChart();
     barChart = new QChart();
-
     barChartView = new QChartView(this);
     barChartView->setChart(barChart);
 
-    pieChartClass = new PieChart();
     pieChart = new QChart();
-
     pieChartView = new QChartView(this);
     pieChartView->setChart(pieChart);
 
@@ -98,6 +71,14 @@ Widget::Widget(QWidget *parent)
     vLayout->addWidget(statusBar);
     vLayout->addLayout(hLayout);
 
+    tableAdapter = new TableModelAdapter(tableModel);
+    pieChartAdapter = new PieChartAdapter(pieChart);
+    barChartAdapter = new BarChartAdapter(barChart);
+
+    subj.attach(tableAdapter);
+    subj.attach(pieChartAdapter);
+    subj.attach(barChartAdapter);
+
     QItemSelectionModel *selectionModel = treeView->selectionModel();
 
     connect(selectionModel, &QItemSelectionModel::selectionChanged, this, &Widget::selectionChangedSlot);
@@ -109,9 +90,10 @@ Widget::Widget(QWidget *parent)
 
 Widget::~Widget()
 {
-    delete barChartClass;
-    delete pieChartClass;
     delete tableModel;
+    delete tableAdapter;
+    delete pieChartAdapter;
+    delete barChartAdapter;
 }
 
 void Widget::selectionChangedSlot(const QItemSelection &selected, const QItemSelection &deselected)
@@ -123,11 +105,7 @@ void Widget::selectionChangedSlot(const QItemSelection &selected, const QItemSel
         currentPath = dirModel->filePath(index);
         this->statusBar->setText("Выбранный путь : " + currentPath);
         QHash<QString, float> table = currentStrategy->Calculation(currentPath);
-        tableModel->setDataModel(fillingData(table));
-
-        pieChartClass->createChart(table, pieChart);
-
-        barChartClass->createChart(table, barChart);
+        subj.setData(table);
     }
 }
 
@@ -143,13 +121,7 @@ void Widget::chooseStrategy(int choose)
     }
     if(currentPath != ""){
         QHash<QString, float> table = currentStrategy->Calculation(currentPath);
-
-        tableModel->setDataModel(fillingData(table));
-
-        pieChartClass->createChart(table, pieChart);
-
-        barChartClass->createChart(table, barChart);
-
+        subj.setData(table);
         qDebug() << currentPath;
     }
 }

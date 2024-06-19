@@ -14,6 +14,7 @@
 #include "CalculationSize.h"
 #include "filebrowserdatamodel.h"
 #include "Chart.h"
+#include "SubjectObs.h"
 
 class Widget : public QWidget
 {
@@ -35,11 +36,9 @@ private:
     QFileSystemModel *dirModel;
     QTreeView *treeView;
     // Столбчатая диаграмма
-    Chart *barChartClass;
     QChart *barChart;
     QChartView *barChartView;
     // Круговая диаграмма
-    Chart *pieChartClass;
     QChart *pieChart;
     QChartView *pieChartView;
 
@@ -56,6 +55,11 @@ private:
 
     QString currentPath;
     SizeCalculator *currentStrategy;
+
+    Subject subj;
+    TableModelAdapter *tableAdapter;
+    BarChartAdapter *barChartAdapter;
+    PieChartAdapter *pieChartAdapter;
 };
 
 #endif // WIDGET_H
