@@ -13,6 +13,7 @@
 #include <QStackedWidget>
 #include "CalculationSize.h"
 #include "filebrowserdatamodel.h"
+#include "Chart.h"
 
 class Widget : public QWidget
 {
@@ -27,10 +28,20 @@ public:
     ~Widget();
 
 private:
+    // Модель файловой системы
     FileBrowserDataModel *tableModel;
     QTableView *tableView;
+    // Модель таблицы
     QFileSystemModel *dirModel;
     QTreeView *treeView;
+    // Столбчатая диаграмма
+    Chart *barChartClass;
+    QChart *barChart;
+    QChartView *barChartView;
+    // Круговая диаграмма
+    Chart *pieChartClass;
+    QChart *pieChart;
+    QChartView *pieChartView;
 
     QHBoxLayout *hLayout;
     QHBoxLayout *hLayoutComboBoxs;

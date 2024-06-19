@@ -44,19 +44,31 @@ Widget::Widget(QWidget *parent)
     dirModel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
     dirModel->setRootPath("C:/");
 
-    statusBar = new QLabel("Выбранный путь: ");
-    labelChooseStategy = new QLabel("Стратегия: ");
-    labelChooseDispaly = new QLabel("Вид отображения: ");
-
-    tableView = new QTableView();
+    tableView = new QTableView(this);
     tableView->setModel(tableModel);
     tableView->setShowGrid(false); // отключение сетки
     tableView->setColumnWidth(0, 310); // значение по умолчанию 125
 
-    treeView = new QTreeView();
+    treeView = new QTreeView(this);
     treeView->setModel(dirModel);
     treeView->setMinimumWidth(400);
     treeView->header()->resizeSection(0, 400);
+
+    barChartClass = new BarChart();
+    barChart = new QChart();
+
+    barChartView = new QChartView(this);
+    barChartView->setChart(barChart);
+
+    pieChartClass = new PieChart();
+    pieChart = new QChart();
+
+    pieChartView = new QChartView(this);
+    pieChartView->setChart(pieChart);
+
+    statusBar = new QLabel("Выбранный путь: ");
+    labelChooseStategy = new QLabel("Стратегия: ");
+    labelChooseDispaly = new QLabel("Вид отображения: ");
 
     chooseStategyBox = new QComboBox();
     chooseStategyBox->addItem("by Folders");
@@ -73,23 +85,18 @@ Widget::Widget(QWidget *parent)
     hLayoutComboBoxs->addWidget(chooseDispalyBox);
     hLayoutComboBoxs->addStretch(1);
 
+    QStackedWidget *stackedWidget = new QStackedWidget;
+    stackedWidget->addWidget(tableView);
+    stackedWidget->addWidget(pieChartView);
+    stackedWidget->addWidget(barChartView);
+
     hLayout->addWidget(treeView);
-    hLayout->addWidget(tableView);
-    hLayout->setStretchFactor(tableView, 1);
-
-    //    QLabel * label1 = new QLabel("Table");
-    //    QLabel * label2 = new QLabel("Pie");
-    //    QLabel * label3 = new QLabel("Bar");
-
-    //    QStackedWidget *stackedWidget = new QStackedWidget;
-    //    stackedWidget->addWidget(label1);
-    //    stackedWidget->addWidget(label2);
-    //    stackedWidget->addWidget(label3);
+    hLayout->addWidget(stackedWidget);
+    hLayout->setStretchFactor(stackedWidget, 1);
 
     vLayout->addLayout(hLayoutComboBoxs);
     vLayout->addWidget(statusBar);
     vLayout->addLayout(hLayout);
-    //    vLayout->addWidget(stackedWidget);
 
     QItemSelectionModel *selectionModel = treeView->selectionModel();
 
@@ -97,12 +104,15 @@ Widget::Widget(QWidget *parent)
 
     connect(chooseStategyBox, qOverload<int>(&QComboBox::currentIndexChanged), this, &Widget::chooseStrategy);
 
-    //    connect(chooseDispalyBox, SIGNAL(activated(int)), stackedWidget, SLOT(setCurrentIndex(int)));
-
+    connect(chooseDispalyBox, qOverload<int>(&QComboBox::activated), stackedWidget, &QStackedWidget::setCurrentIndex);
 }
 
 Widget::~Widget()
-{}
+{
+    delete barChartClass;
+    delete pieChartClass;
+    delete tableModel;
+}
 
 void Widget::selectionChangedSlot(const QItemSelection &selected, const QItemSelection &deselected)
 {
@@ -112,7 +122,12 @@ void Widget::selectionChangedSlot(const QItemSelection &selected, const QItemSel
     if(index.isValid()){
         currentPath = dirModel->filePath(index);
         this->statusBar->setText("Выбранный путь : " + currentPath);
-        tableModel->setDataModel(fillingData(currentStrategy->Calculation(currentPath)));
+        QHash<QString, float> table = currentStrategy->Calculation(currentPath);
+        tableModel->setDataModel(fillingData(table));
+
+        pieChartClass->createChart(table, pieChart);
+
+        barChartClass->createChart(table, barChart);
     }
 }
 
@@ -127,7 +142,14 @@ void Widget::chooseStrategy(int choose)
         qDebug() << "by Types";
     }
     if(currentPath != ""){
-        tableModel->setDataModel(fillingData(currentStrategy->Calculation(currentPath)));
+        QHash<QString, float> table = currentStrategy->Calculation(currentPath);
+
+        tableModel->setDataModel(fillingData(table));
+
+        pieChartClass->createChart(table, pieChart);
+
+        barChartClass->createChart(table, barChart);
+
         qDebug() << currentPath;
     }
 }

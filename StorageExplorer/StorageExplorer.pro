@@ -1,5 +1,6 @@
 QT       += core gui \
     widgets
+QT += charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -16,6 +17,7 @@ SOURCES += \
 
 HEADERS += \
     CalculationSize.h \
+    Chart.h \
     filebrowserdatamodel.h \
     widget.h
 
