@@ -55,6 +55,8 @@ private:
 
     QString currentPath;
     SizeCalculator *currentStrategy;
+    //CalculationSizeForFolders *folderStategy;
+    //CalculationSizeForFileTypes *typeStrategy;
 
     Subject subj;
     TableModelAdapter *tableAdapter;
