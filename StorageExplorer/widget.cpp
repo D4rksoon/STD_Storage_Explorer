@@ -5,6 +5,8 @@ Widget::Widget(QWidget *parent)
     : QWidget{parent}
 {
     currentStrategy->setCalculationStrategy(new CalculationSizeForFolders);
+    //folderStategy->setCalculationStrategy(new CalculationSizeForFolders);
+    //typeStrategy->setCalculationStrategy(new CalculationSizeForFileTypes);
     currentPath = "";
 
     this->setGeometry(100, 100, 1000, 500);
@@ -113,10 +115,12 @@ void Widget::chooseStrategy(int choose)
 {
     if(choose == 0){
         currentStrategy->setCalculationStrategy(new CalculationSizeForFolders);
+        //currentStrategy->setCalculationStrategy(folderStategy);
         qDebug() << "by Folders";
     }
     else if(choose == 1){
         currentStrategy->setCalculationStrategy(new CalculationSizeForFileTypes);
+        //currentStrategy->setCalculationStrategy(typeStategy);
         qDebug() << "by Types";
     }
     if(currentPath != ""){
